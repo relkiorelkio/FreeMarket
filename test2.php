@@ -55,4 +55,4 @@
                                 <td><input class="form-control" type="text" name="marc-prod" maxlength="30" required="" value="'.$prod['Marca'].'"></td>
                                 <td><input class="form-control" type="text" name="stock-prod" maxlength="30" required="" value="'.$prod['Stock'].'"></td>
                                 <td>';
-                                    $proveedoresc3=  ejecutarSQL::consultar("select *
+                                    
