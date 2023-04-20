@@ -7,9 +7,9 @@
 <body id="container-page-index">
     <?php include './inc/navbar.php'; ?>
     <div class="jumbotron" id="jumbotron-index">
-      <h1><span class="tittles-pages-logo">Free Market</span> <small style="color: #fff;">Mexico</small></h1>
+      <h1><span class="tittles-pages-logo">Free Market</span> <small style="color: #fff;">México</small></h1>
       <p>
-          Bienvenido a nuestra tienda en linea, aquí encontrara una gran variedad de productos.
+            Bienvenido a nuestra tienda en línea, aquí encontrara una gran variedad de productos.     
       </p>
     </div>
     <section id="new-prod-index">
