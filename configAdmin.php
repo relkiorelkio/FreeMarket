@@ -91,28 +91,102 @@
                             </form>
                         </div>
                     </div>
+                    
+                    <!-- Administracion eliminar producto drop -->
                     <div class="col-xs-12 col-sm-6">
                         <br><br>
                         <div id="del-prod-form">
                             <h2 class="text-danger text-center"><small><i class="fa fa-trash-o"></i></small>&nbsp;&nbsp;Eliminar un producto</h2>
-                             <form action="process/delprod.php" method="post" role="form">
-                                 <div class="form-group">
-                                     <label>Productos</label>
-                                     <select class="form-control" name="prod-code">
-                                         <?php 
-                                             $productoc=  ejecutarSQL::consultar("select * from producto");
-                                             while($prodc=mysqli_fetch_array($productoc)){
-                                                 echo '<option value="'.$prodc['CodigoProd'].'">'.$prodc['Marca'].'-'.$prodc['NombreProd'].'-'.$prodc['Modelo'].'</option>';
-                                             }
-                                         ?>
-                                     </select>
-                                 </div>
-                                 <p class="text-center"><button type="submit" class="btn btn-danger">Eliminar</button></p>
-                                 <br>
-                                 <div id="res-form-del-prod" style="width: 100%; text-align: center; margin: 0;"></div>
-                             </form>
-                         </div>
+                            <form action="process/delprod.php" method="post" role="form">
+                                <div class="form-group">
+                                    <label>Productos</label>
+                                    <select class="form-control" name="prod-code">
+                                        <?php 
+                                        $productoc = ejecutarSQL::consultar("SELECT * FROM producto");
+                                        while($prodc=mysqli_fetch_array($productoc)){
+                                            echo '<option value="'.$prodc['CodigoProd'].'">'.$prodc['Marca'].'-'.$prodc['NombreProd'].'-'.$prodc['Modelo'].'</option>';
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                                <p class="text-center"><button type="submit" class="btn btn-danger">Eliminar</button></p>
+                                <br>
+                                <div id="res-form-del-prod" style="width: 100%; text-align: center; margin: 0;"></div>
+                            </form>
+                        </div>
                     </div>
+
+                    <!-- Consulta avanzada 1  -->
+                    <div class="col-xs-12 col-sm-6">
+                        <br><br>
+                        <div id="stock-prod-form">
+                            <h2 class="text-info text-center"><small><i class="fa fa-list"></i></small>&nbsp;&nbsp;Productos con stock menor a 10</h2>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Modelo</th>
+                                        <th>Stock</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php 
+                                        $stockc = ejecutarSQL::consultar("SELECT NombreProd, Modelo, Stock FROM producto WHERE Stock < 10;");
+                                        while ($stock = mysqli_fetch_array($stockc)) {
+                                            echo '<tr>';
+                                            echo '<td>'.$stock['NombreProd'].'</td>';
+                                            echo '<td>'.$stock['Modelo'].'</td>';
+                                            echo '<td>'.$stock['Stock'].'</td>';
+                                            echo '</tr>';
+                                        }
+                                    ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Consulta avanzada 2 -->
+                    <div class="col-xs-12 col-sm-6">
+                        <br><br>
+                        <div id="stock-prod-form">
+                            <h2 class="text-info text-center"><small><i class="fa fa-list"></i></small>&nbsp;&nbsp;Clientes con más pedidos</h2>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre completo</th>
+                                        <th>Número de pedidos</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php 
+                                        $clientesPedidos = ejecutarSQL::consultar("SELECT c.NombreCompleto, COUNT(v.NumPedido) AS NumPedidos
+                                            FROM cliente c
+                                            INNER JOIN venta v ON c.RFC = v.RFC
+                                            GROUP BY c.RFC
+                                            ORDER BY NumPedidos DESC
+                                            LIMIT 1;");
+                                        while ($cliente = mysqli_fetch_array($clientesPedidos)) {
+                                            echo '<tr>';
+                                            echo '<td>'.$cliente['NombreCompleto'].'</td>';
+                                            echo '<td>'.$cliente['NumPedidos'].'</td>';
+                                            echo '</tr>';
+                                        }
+                                    ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                   
+                   
+
+
+
+
+
+                    
+                           
+                    <!-- Actualizar Datos del PRODUCTO -->
                     <div class="col-xs-12">
                         <br><br>
                         <div class="panel panel-info">
@@ -175,7 +249,7 @@
                                                                     $nombreP=$provc3['NombreProveedor'];
                                                                     $rfcP=$provc3['RFCProveedor'];
                                                             }
-                                                       echo '<select class="form-control" name="prod-Prove">';
+                                                       echo '<select class="form-control" name="prov-prod">';
                                                                 echo '<option value="'.$rfcP.'">'.$nombreP.'</option>';
                                                                 $proveedoresc2=  ejecutarSQL::consultar("select * from proveedor");
                                                                 while($provc2=mysqli_fetch_array($proveedoresc2)){
@@ -185,12 +259,13 @@
                                                                       echo '<option value="'.$provc2['RFCProveedor'].'">'.$provc2['NombreProveedor'].'</option>';
                                                                     }  
                                                                 }  
-                                                       echo '</select>
+                                                         echo '</select>
                                                         </td>
                                                         <td class="text-center">
-                                                            <button type="submit" class="btn btn-sm btn-primary button-UPR" value="res-update-product-'.$upr.'">Actualizar</button>
+                                                            <button type="submit" class="btn btn-sm btn-primary button-UP" value="res-update-prove-'.$up.'">Actualizar</button>
                                                             <div id="res-update-product-'.$upr.'" style="width: 100%; margin:0px; padding:0px;"></div>
                                                         </td>
+                                                        
                                                     </tr>
                                                   </form>
                                                 </div>

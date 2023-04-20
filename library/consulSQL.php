@@ -42,3 +42,44 @@ class consultasSQL{
         return $consul;
     }
 }
+
+class ConexionPDO {
+    private static $conexion;
+  
+    public static function conectar() {
+      $usuario = "root";
+      $password = "";
+      $host = "localhost:3307";
+      $nombreBaseDatos = "store";
+  
+      try {
+        self::$conexion = new PDO("mysql:host=$host;dbname=$nombreBaseDatos", $usuario, $password);
+        self::$conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        self::$conexion->exec("SET CHARACTER SET utf8");
+      } catch (PDOException $e) {
+        die("Error de conexión: " . $e->getMessage());
+      }
+    }
+  
+    public static function desconectar() {
+      self::$conexion = null;
+    }
+  
+    public static function obtenerConexion() {
+      if (!self::$conexion) {
+        self::conectar();
+      }
+  
+      return self::$conexion;
+    }
+  }
+  
+function EliminarProducto($codeProd) {
+    $pdo = ConexionPDO::obtenerConexion();
+    $stmt = $pdo->prepare("CALL EliminarProducto(?)");
+    $stmt->bindParam(1, $codeProd, PDO::PARAM_INT);
+    $stmt->execute();
+    $rowCount = $stmt->rowCount();
+    return $rowCount;
+  }
+  

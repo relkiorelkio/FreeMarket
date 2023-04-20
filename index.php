@@ -9,7 +9,7 @@
     <div class="jumbotron" id="jumbotron-index">
       <h1><span class="tittles-pages-logo">Free Market</span> <small style="color: #fff;">Mexico</small></h1>
       <p>
-          Bienvenido a nuestra tienda en linea, aquí encontrara una gran variedad de productos electronicos.
+          Bienvenido a nuestra tienda en linea, aquí encontrara una gran variedad de productos.
       </p>
     </div>
     <section id="new-prod-index">
@@ -30,9 +30,8 @@
                              <div class="thumbnail">
                                <img src="assets/img-products/'.$fila['Imagen'].'">
                                <div class="caption">
-                                 <h3>'.$fila['Marca'].'</h3>
-                                 <p>'.$fila['NombreProd'].'</p>
-                                 <p>$'.$fila['Precio'].'</p>
+                                 <h3>'.$fila['NombreProd'].'</h3>
+                                 <h4>$'.$fila['Precio'].'</h4>
                                  <p class="text-center">
                                      <a href="infoProd.php?CodigoProd='.$fila['CodigoProd'].'" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>&nbsp; Detalles</a>&nbsp;&nbsp;
                                      <button value="'.$fila['CodigoProd'].'" class="btn btn-success btn-sm botonCarrito"><i class="fa fa-shopping-cart"></i>&nbsp; Añadir</button>

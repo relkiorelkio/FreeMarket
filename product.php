@@ -53,9 +53,8 @@ include './library/consulSQL.php';
                                        <div class="thumbnail">
                                          <img src="assets/img-products/'.$fila['Imagen'].'">
                                          <div class="caption">
-                                           <h3>'.$fila['Marca'].'</h3>
-                                           <p>'.$fila['NombreProd'].'</p>
-                                           <p>$'.$fila['Precio'].'</p>
+                                           <h3>'.$fila['NombreProd'].'</h3>
+                                           <h4>$'.$fila['Precio'].'</h4>
                                            <p class="text-center">
                                                <a href="infoProd.php?CodigoProd='.$fila['CodigoProd'].'" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>&nbsp; Detalles</a>&nbsp;&nbsp;
                                                <button value="'.$fila['CodigoProd'].'" class="btn btn-success btn-sm botonCarrito"><i class="fa fa-shopping-cart"></i>&nbsp; Añadir</button>
@@ -87,9 +86,8 @@ include './library/consulSQL.php';
                                              <div class="thumbnail">
                                                <img src="assets/img-products/'.$prod['Imagen'].'">
                                                <div class="caption">
-                                                 <h3>'.$prod['Marca'].'</h3>
-                                                 <p>'.$prod['NombreProd'].'</p>
-                                                 <p>$'.$prod['Precio'].'</p>
+                                                 <h3>'.$prod['NombreProd'].'</h3>                      
+                                                 <h4>$'.$prod['Precio'].'</h4>
                                                  <p class="text-center">
                                                      <a href="infoProd.php?CodigoProd='.$prod['CodigoProd'].'" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>&nbsp; Detalles</a>&nbsp;&nbsp;
                                                      <button value="'.$prod['CodigoProd'].'" class="btn btn-success btn-sm botonCarrito"><i class="fa fa-shopping-cart"></i>&nbsp; Añadir</button>
