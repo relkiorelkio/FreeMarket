@@ -1,31 +1,49 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.0
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1:3307
+-- Generation Time: Apr 21, 2023 at 02:17 AM
+-- Server version: 10.4.27-MariaDB
+-- PHP Version: 8.2.0
+
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `store`
+-- Database: `store`
 --
-CREATE DATABASE IF NOT EXISTS `store` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
-USE `store`;
+
+DELIMITER $$
+--
+-- Procedures
+--
+CREATE DEFINER=`root`@`localhost` PROCEDURE `EliminarProducto` (IN `codigo` INT)   BEGIN
+    DELETE FROM producto WHERE CodigoProd = codigo;
+END$$
+
+DELIMITER ;
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `administrador`
+-- Table structure for table `administrador`
 --
 
-CREATE TABLE IF NOT EXISTS `administrador` (
+CREATE TABLE `administrador` (
   `Nombre` varchar(30) NOT NULL,
   `Clave` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
--- Volcado de datos para la tabla `administrador`
+-- Dumping data for table `administrador`
 --
 
 INSERT INTO `administrador` (`Nombre`, `Clave`) VALUES
@@ -34,31 +52,31 @@ INSERT INTO `administrador` (`Nombre`, `Clave`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `categoria`
+-- Table structure for table `categoria`
 --
 
-CREATE TABLE IF NOT EXISTS `categoria` (
+CREATE TABLE `categoria` (
   `CodigoCat` varchar(30) NOT NULL,
   `Nombre` varchar(30) NOT NULL,
   `Descripcion` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
--- Volcado de datos para la tabla `categoria`
+-- Dumping data for table `categoria`
 --
 
 INSERT INTO `categoria` (`CodigoCat`, `Nombre`, `Descripcion`) VALUES
-('C1', 'Electrodomésticos', 'Articulos de primera necesidad para el hogar'),
-('C2', 'Multimedia', 'Articulos de entretenimiento y diversión'),
-('C3', 'Móbiles', 'Teléfonos celulares smartphones');
+('C1', 'Laptops', 'Computadores portatiles modernos'),
+('C2', 'Smart TVs', 'Televisores inteligentes de alta definicion'),
+('C3', 'Celulares', 'Teléfonos celulares smartphones');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `cliente`
+-- Table structure for table `cliente`
 --
 
-CREATE TABLE IF NOT EXISTS `cliente` (
+CREATE TABLE `cliente` (
   `RFC` varchar(30) NOT NULL,
   `Nombre` varchar(30) NOT NULL,
   `NombreCompleto` varchar(70) NOT NULL,
@@ -67,28 +85,77 @@ CREATE TABLE IF NOT EXISTS `cliente` (
   `Direccion` varchar(200) NOT NULL,
   `Telefono` int(20) NOT NULL,
   `Email` varchar(30) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `cliente`
+--
+
+INSERT INTO `cliente` (`RFC`, `Nombre`, `NombreCompleto`, `Apellido`, `Clave`, `Direccion`, `Telefono`, `Email`) VALUES
+('SARJ0103176T1', 'relkio', 'Jesus Aaron', 'Salgado Ramirez', 'e4cea64c5f6d39ccea441001381a7b37', 'Lazaro Cardenas 1819', 2147483647, 'relkioaaron@gmail.com'),
+('SARJ0103176T2', 'relkie', 'Desu no', 'Perez Lopez', 'e4cea64c5f6d39ccea441001381a7b37', 'Lomas 3989', 2147483647, 'relkiopopo@gmail.com'),
+('SARJ0103176T3', 'relkiu', 'Salgado', 'Salgado Ramirez', 'e4cea64c5f6d39ccea441001381a7b37', 'Campana de Dolores 3404', 2147483647, 'relkioaaron1@gmail.com');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `detalle`
+-- Table structure for table `detalle`
 --
 
-CREATE TABLE IF NOT EXISTS `detalle` (
+CREATE TABLE `detalle` (
   `NumPedido` int(20) NOT NULL,
   `CodigoProd` varchar(30) NOT NULL,
   `CantidadProductos` int(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `detalle`
+--
+
+INSERT INTO `detalle` (`NumPedido`, `CodigoProd`, `CantidadProductos`) VALUES
+(14, '3', 1),
+(15, '1', 1),
+(15, '2', 1),
+(16, '2', 1),
+(16, '1', 1),
+(17, '6', 1),
+(19, '6', 1),
+(28, '6', 1),
+(30, '1', 1),
+(30, '1', 1),
+(32, '1', 1),
+(33, '3', 1),
+(34, '1', 1),
+(35, '1', 1),
+(35, '1', 1),
+(36, '3', 1),
+(40, '3', 1),
+(41, '3', 1),
+(42, '2', 1),
+(43, '1', 1),
+(44, '1', 1);
+
+--
+-- Triggers `detalle`
+--
+DELIMITER $$
+CREATE TRIGGER `actualizar_stock` AFTER INSERT ON `detalle` FOR EACH ROW BEGIN
+    UPDATE producto
+    SET Stock = Stock - NEW.CantidadProductos
+    WHERE CodigoProd = NEW.CodigoProd;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `producto`
+-- Table structure for table `producto`
 --
 
-CREATE TABLE IF NOT EXISTS `producto` (
-  `CodigoProd` varchar(30) NOT NULL,
+CREATE TABLE `producto` (
+  `id` int(11) NOT NULL,
+  `CodigoProd` int(11) NOT NULL,
   `NombreProd` varchar(30) NOT NULL,
   `CodigoCat` varchar(30) NOT NULL,
   `Precio` decimal(30,2) NOT NULL,
@@ -98,24 +165,34 @@ CREATE TABLE IF NOT EXISTS `producto` (
   `RFCProveedor` varchar(30) NOT NULL,
   `Imagen` varchar(150) NOT NULL,
   `Nombre` varchar(30) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `producto`
+--
+
+INSERT INTO `producto` (`id`, `CodigoProd`, `NombreProd`, `CodigoCat`, `Precio`, `Modelo`, `Marca`, `Stock`, `RFCProveedor`, `Imagen`, `Nombre`) VALUES
+(17, 1, 'Sony Xperia 1 IV', 'C3', '19200.00', 'Xperia 1 IV', 'Sony', 4, '0001781', 'xperia1iv.jpg', 'admin'),
+(18, 2, 'Motorola Moto G71', 'C3', '5599.00', 'G71', 'Motorola', 5, '0001790', 'motorola g71.jpg', 'admin'),
+(23, 3, 'Google Pixel 7', 'C3', '11599.00', 'Pixel 7 ', 'Google', 2, '0001792', 'GooglePixel7.jpg', 'admin'),
+(26, 6, 'Lenovo Legion 5 17.3\" FHD', 'C1', '15000.00', 'Legion 5', 'Lenovo', 4, '0001791', 'LenovoLegion5.jpg', 'admin');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `proveedor`
+-- Table structure for table `proveedor`
 --
 
-CREATE TABLE IF NOT EXISTS `proveedor` (
+CREATE TABLE `proveedor` (
   `RFCProveedor` varchar(30) NOT NULL,
   `NombreProveedor` varchar(30) NOT NULL,
   `Direccion` varchar(200) NOT NULL,
   `Telefono` int(20) NOT NULL,
   `PaginaWeb` varchar(30) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
--- Volcado de datos para la tabla `proveedor`
+-- Dumping data for table `proveedor`
 --
 
 INSERT INTO `proveedor` (`RFCProveedor`, `NombreProveedor`, `Direccion`, `Telefono`, `PaginaWeb`) VALUES
@@ -124,102 +201,163 @@ INSERT INTO `proveedor` (`RFCProveedor`, `NombreProveedor`, `Direccion`, `Telefo
 ('0001783', 'TCL', 'Huizhou, Guangdong, China', 25698745, 'tcl.com.ar'),
 ('0001785', 'Samsung', 'Samsung Town, Seúl, Corea del Sur', 22504787, 'www.samsung.com'),
 ('0001787', 'LG', 'Seúl,Corea del Sur', 26589874, 'www.lg.com'),
-('0001788', 'Compaq', 'Houston, Texas, EE.UU', 24569875, 'www.compaq.com');
+('0001789', 'Huawei ', 'Shenzhen, Guangdong, China', 22165848, 'www.huawei.com'),
+('0001790', 'Motorola', 'Schaumburg, Illinois, USA', 22154687, 'www.motorola.com'),
+('0001791', 'Lenovo', 'Haidian District, Beijing, China', 22984561, 'www.lenovo.com'),
+('0001792', 'Google', 'Menlo Park, California, United States', 22139678, 'www.google.com');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `venta`
+-- Table structure for table `venta`
 --
 
-CREATE TABLE IF NOT EXISTS `venta` (
-`NumPedido` int(20) NOT NULL,
+CREATE TABLE `venta` (
+  `NumPedido` int(20) NOT NULL,
   `Fecha` varchar(150) NOT NULL,
   `RFC` varchar(30) NOT NULL,
   `Descuento` int(20) NOT NULL,
   `TotalPagar` decimal(30,2) NOT NULL,
   `Estado` varchar(150) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
--- Índices para tablas volcadas
+-- Dumping data for table `venta`
+--
+
+INSERT INTO `venta` (`NumPedido`, `Fecha`, `RFC`, `Descuento`, `TotalPagar`, `Estado`) VALUES
+(5, '09-04-2023', 'SARJ0103176T1', 0, '19199.00', 'Pendiente'),
+(6, '09-04-2023', 'SARJ0103176T1', 0, '19199.00', 'Pendiente'),
+(7, '09-04-2023', 'SARJ0103176T1', 0, '19199.00', 'Pendiente'),
+(8, '09-04-2023', 'SARJ0103176T1', 0, '19199.00', 'Pendiente'),
+(9, '09-04-2023', 'SARJ0103176T1', 0, '19199.00', 'Pendiente'),
+(10, '09-04-2023', 'SARJ0103176T1', 0, '19199.00', 'Pendiente'),
+(11, '10-04-2023', 'SARJ0103176T1', 0, '19199.00', 'Pendiente'),
+(12, '10-04-2023', 'SARJ0103176T1', 0, '19199.00', 'Pendiente'),
+(13, '10-04-2023', 'SARJ0103176T1', 0, '19199.00', 'Pendiente'),
+(14, '13-04-2023', 'SARJ0103176T1', 0, '28000.00', 'Pendiente'),
+(15, '15-04-2023', 'SARJ0103176T1', 0, '24799.00', 'Pendiente'),
+(16, '15-04-2023', 'SARJ0103176T1', 0, '24799.00', 'Pendiente'),
+(17, '19-04-2023', 'SARJ0103176T1', 0, '15000.00', 'Pendiente'),
+(18, '19-04-2023', 'SARJ0103176T1', 0, '15000.00', 'Pendiente'),
+(19, '19-04-2023', 'SARJ0103176T1', 0, '15000.00', 'Pendiente'),
+(20, '19-04-2023', 'SARJ0103176T1', 0, '15000.00', 'Pendiente'),
+(21, '19-04-2023', 'SARJ0103176T1', 0, '15000.00', 'Pendiente'),
+(22, '19-04-2023', 'SARJ0103176T1', 0, '15000.00', 'Pendiente'),
+(23, '19-04-2023', 'SARJ0103176T1', 0, '15000.00', 'Pendiente'),
+(24, '19-04-2023', 'SARJ0103176T1', 0, '15000.00', 'Pendiente'),
+(25, '19-04-2023', 'SARJ0103176T1', 0, '15000.00', 'Pendiente'),
+(26, '19-04-2023', 'SARJ0103176T1', 0, '15000.00', 'Pendiente'),
+(27, '19-04-2023', 'SARJ0103176T1', 0, '15000.00', 'Pendiente'),
+(28, '19-04-2023', 'SARJ0103176T1', 0, '15000.00', 'Pendiente'),
+(29, '19-04-2023', 'SARJ0103176T1', 0, '15000.00', 'Pendiente'),
+(30, '19-04-2023', 'SARJ0103176T1', 0, '38400.00', 'Pendiente'),
+(31, '19-04-2023', 'SARJ0103176T1', 0, '38400.00', 'Pendiente'),
+(32, '19-04-2023', 'SARJ0103176T1', 0, '19200.00', 'Pendiente'),
+(33, '19-04-2023', 'SARJ0103176T1', 0, '11599.00', 'Pendiente'),
+(34, '19-04-2023', 'SARJ0103176T1', 0, '19200.00', 'Pendiente'),
+(35, '19-04-2023', 'SARJ0103176T1', 0, '38400.00', 'Pendiente'),
+(36, '19-04-2023', 'SARJ0103176T1', 0, '11599.00', 'Pendiente'),
+(37, '19-04-2023', 'SARJ0103176T1', 0, '11599.00', 'Pendiente'),
+(38, '19-04-2023', 'SARJ0103176T1', 0, '11599.00', 'Pendiente'),
+(39, '19-04-2023', 'SARJ0103176T1', 0, '11599.00', 'Pendiente'),
+(40, '19-04-2023', 'SARJ0103176T1', 0, '11599.00', 'Pendiente'),
+(41, '19-04-2023', 'SARJ0103176T1', 0, '11599.00', 'Pendiente'),
+(42, '19-04-2023', 'SARJ0103176T1', 0, '5599.00', 'Pendiente'),
+(43, '19-04-2023', 'SARJ0103176T1', 0, '19200.00', 'Pendiente'),
+(44, '20-04-2023', 'SARJ0103176T1', 0, '19200.00', 'Pendiente');
+
+--
+-- Indexes for dumped tables
 --
 
 --
--- Indices de la tabla `administrador`
+-- Indexes for table `administrador`
 --
 ALTER TABLE `administrador`
- ADD PRIMARY KEY (`Nombre`);
+  ADD PRIMARY KEY (`Nombre`);
 
 --
--- Indices de la tabla `categoria`
+-- Indexes for table `categoria`
 --
 ALTER TABLE `categoria`
- ADD PRIMARY KEY (`CodigoCat`);
+  ADD PRIMARY KEY (`CodigoCat`);
 
 --
--- Indices de la tabla `cliente`
+-- Indexes for table `cliente`
 --
 ALTER TABLE `cliente`
- ADD PRIMARY KEY (`RFC`);
+  ADD PRIMARY KEY (`RFC`);
 
 --
--- Indices de la tabla `detalle`
+-- Indexes for table `detalle`
 --
 ALTER TABLE `detalle`
- ADD KEY `NumPedido` (`NumPedido`), ADD KEY `CodigoProd` (`CodigoProd`);
+  ADD KEY `NumPedido` (`NumPedido`),
+  ADD KEY `CodigoProd` (`CodigoProd`);
 
 --
--- Indices de la tabla `producto`
+-- Indexes for table `producto`
 --
 ALTER TABLE `producto`
- ADD PRIMARY KEY (`CodigoProd`), ADD KEY `CodigoCat` (`CodigoCat`), ADD KEY `RFCProveedor` (`RFCProveedor`), ADD KEY `Agregado` (`Nombre`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `CodigoCat` (`CodigoCat`),
+  ADD KEY `RFCProveedor` (`RFCProveedor`),
+  ADD KEY `Agregado` (`Nombre`);
 
 --
--- Indices de la tabla `proveedor`
+-- Indexes for table `proveedor`
 --
 ALTER TABLE `proveedor`
- ADD PRIMARY KEY (`RFCProveedor`);
+  ADD PRIMARY KEY (`RFCProveedor`);
 
 --
--- Indices de la tabla `venta`
+-- Indexes for table `venta`
 --
 ALTER TABLE `venta`
- ADD PRIMARY KEY (`NumPedido`), ADD KEY `RFC` (`RFC`), ADD KEY `RFC_2` (`RFC`);
+  ADD PRIMARY KEY (`NumPedido`),
+  ADD KEY `RFC` (`RFC`),
+  ADD KEY `RFC_2` (`RFC`);
 
 --
--- AUTO_INCREMENT de las tablas volcadas
---
-
---
--- AUTO_INCREMENT de la tabla `venta`
---
-ALTER TABLE `venta`
-MODIFY `NumPedido` int(20) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
---
--- Restricciones para tablas volcadas
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- Filtros para la tabla `detalle`
---
-ALTER TABLE `detalle`
-ADD CONSTRAINT `detalle_ibfk_8` FOREIGN KEY (`CodigoProd`) REFERENCES `producto` (`CodigoProd`) ON UPDATE CASCADE,
-ADD CONSTRAINT `detalle_ibfk_9` FOREIGN KEY (`NumPedido`) REFERENCES `venta` (`NumPedido`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Filtros para la tabla `producto`
+-- AUTO_INCREMENT for table `producto`
 --
 ALTER TABLE `producto`
-ADD CONSTRAINT `producto_ibfk_7` FOREIGN KEY (`CodigoCat`) REFERENCES `categoria` (`CodigoCat`) ON UPDATE CASCADE,
-ADD CONSTRAINT `producto_ibfk_8` FOREIGN KEY (`RFCProveedor`) REFERENCES `proveedor` (`RFCProveedor`) ON UPDATE CASCADE,
-ADD CONSTRAINT `producto_ibfk_9` FOREIGN KEY (`Nombre`) REFERENCES `administrador` (`Nombre`);
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
--- Filtros para la tabla `venta`
+-- AUTO_INCREMENT for table `venta`
 --
 ALTER TABLE `venta`
-ADD CONSTRAINT `venta_ibfk_1` FOREIGN KEY (`RFC`) REFERENCES `cliente` (`RFC`) ON UPDATE CASCADE;
+  MODIFY `NumPedido` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `detalle`
+--
+ALTER TABLE `detalle`
+  ADD CONSTRAINT `detalle_ibfk_9` FOREIGN KEY (`NumPedido`) REFERENCES `venta` (`NumPedido`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `producto`
+--
+ALTER TABLE `producto`
+  ADD CONSTRAINT `producto_ibfk_7` FOREIGN KEY (`CodigoCat`) REFERENCES `categoria` (`CodigoCat`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `producto_ibfk_9` FOREIGN KEY (`Nombre`) REFERENCES `administrador` (`Nombre`);
+
+--
+-- Constraints for table `venta`
+--
+ALTER TABLE `venta`
+  ADD CONSTRAINT `venta_ibfk_1` FOREIGN KEY (`RFC`) REFERENCES `cliente` (`RFC`) ON UPDATE CASCADE;
+COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
